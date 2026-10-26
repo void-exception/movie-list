@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои фильмы</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; padding: 24px; }
+        .wrap { max-width: 1000px; margin: 0 auto; background: #fff; padding: 24px;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { margin: 0; font-size: 22px; }
+        .user { font-size: 14px; color: #555; }
+        .user a { margin-left: 12px; color: #2563eb; text-decoration: none; }
+        .filters { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+        .filters label { font-size: 14px; }
+        select { padding: 6px 8px; border: 1px solid #c9d2dc; border-radius: 4px; }
+        .btn { display: inline-block; padding: 9px 14px; background: #2563eb; color: #fff;
+            text-decoration: none; border-radius: 4px; font-size: 14px; margin-left: auto; }
+        .btn:hover { background: #1d4ed8; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid #e4e8ee; text-align: left; font-size: 14px; }
+        th { background: #f7f9fc; }
+        .btn-small { padding: 6px 10px; font-size: 13px; border-radius: 4px; border: none;
+            cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-edit { background: #f1c40f; color: #000; }
+        .btn-danger { background: #e74c3c; color: #fff; }
+        .empty { text-align: center; color: #888; padding: 18px; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <h1>Мои фильмы</h1>
+        <div class="user">
+            <span th:text="${login}"></span>
+            <a href="/logout">Выйти</a>
+        </div>
+    </div>
+
+    <form method="get" action="/movies" class="filters">
+        <label>Жанр:
+            <select name="genre" onchange="this.form.submit()">
+                <option value="">Все жанры</option>
+                <option th:each="g : ${genres}"
+                        th:value="${g.name()}"
+                        th:text="${g.displayName}"
+                        th:selected="${selectedGenre == g.name()}"></option>
+            </select>
+        </label>
+        <label>Сортировка по году:
+            <select name="sort" onchange="this.form.submit()">
+                <option value="desc" th:selected="${sort == 'desc'}">Новые сверху</option>
+                <option value="asc"  th:selected="${sort == 'asc'}">Старые сверху</option>
+            </select>
+        </label>
+        <a href="/movies/add" class="btn">+ Добавить фильм</a>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Название</th>
+            <th>Год</th>
+            <th>Режиссер</th>
+            <th>Жанр</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${movies}">
+            <td th:text="${m.title}"></td>
+            <td th:text="${m.year}"></td>
+            <td th:text="${m.director}"></td>
+            <td th:text="${m.genre != null ? m.genre.displayName : ''}"></td>
+            <td style="white-space: nowrap;">
+                <a th:href="@{/movies/edit/{id}(id=${m.id})}" class="btn-small btn-edit">Редактировать</a>
+                <form method="post" th:action="@{/movies/delete/{id}(id=${m.id})}" style="display:inline">
+                    <button type="submit" class="btn-small btn-danger"
+                            onclick="return confirm('Удалить фильм?')">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(movies)}">
+            <td colspan="5" class="empty">Фильмов пока нет. Добавьте первый!</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

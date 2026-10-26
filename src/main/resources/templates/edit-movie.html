@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать фильм</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; }
+        .card { max-width: 460px; margin: 60px auto; background: #fff; padding: 28px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        h1 { margin: 0 0 16px; font-size: 22px; }
+        label { display: block; margin-top: 12px; font-weight: bold; font-size: 14px; }
+        input, select { width: 100%; padding: 9px; box-sizing: border-box; margin-top: 4px;
+            border: 1px solid #c9d2dc; border-radius: 4px; }
+        button { margin-top: 20px; padding: 11px; width: 100%; background: #2563eb; color: #fff;
+            border: none; border-radius: 4px; cursor: pointer; font-size: 15px; }
+        button:hover { background: #1d4ed8; }
+        .back { display: inline-block; margin-top: 14px; color: #2563eb; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Редактировать фильм</h1>
+    <form method="post" th:action="@{/movies/edit/{id}(id=${movie.id})}">
+        <label>Название</label>
+        <input type="text" name="title" th:value="${movie.title}" required autofocus>
+
+        <label>Год выпуска</label>
+        <input type="number" name="year" min="1888" max="2100" th:value="${movie.year}" required>
+
+        <label>Режиссер</label>
+        <input type="text" name="director" th:value="${movie.director}" required>
+
+        <label>Жанр</label>
+        <select name="genre" required>
+            <option th:each="g : ${genres}"
+                    th:value="${g.name()}"
+                    th:text="${g.displayName}"
+                    th:selected="${movie.genre == g}"></option>
+        </select>
+
+        <button type="submit">Сохранить</button>
+    </form>
+    <a href="/movies" class="back">← Назад к списку</a>
+</div>
+</body>
+</html>
